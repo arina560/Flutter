@@ -8,9 +8,9 @@ class CourseMetaRow extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Row(
+      spacing: 16,
       children: [
         Text(duration, style: TextStyle(fontSize: 13),),
-        const SizedBox(width: 16),
         Text("$numberOfLessons уроков", style: TextStyle(fontSize: 13)),
       ],
     );

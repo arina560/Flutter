@@ -1,3 +1,5 @@
+import 'package:course_catalog/screens/course_detail_screen.dart';
+
 import '../models/course.dart';
 import '../widgets/course_level_badge.dart';
 import '../widgets/course_meta_row.dart';
@@ -39,14 +41,29 @@ class _CourseCardState extends State<CourseCard>{
               const SizedBox(height: 3),
               CourseMetaRow(duration: widget.course.duration, numberOfLessons: widget.course.numberOfLessons),
               const SizedBox(height: 8),
-              Text(widget.course.description),
+              Text(widget.course.shortDescription),
             ],
             const SizedBox(height: 3),
-            GestureDetector(
-              onTap: _toggleHidden,
-              child: Icon(
-                _isHidden ? Icons.remove : Icons.add,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: _toggleHidden,
+                  child: Icon(
+                    _isHidden ? Icons.remove : Icons.add,
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => CourseDetailScreen(course: widget.course)));
+                  },
+                  style: ElevatedButton.styleFrom(
+                    shadowColor: Colors.deepPurple
+                  ),
+                  child: const Text("Перейти на курс", style: TextStyle(color: Colors.black),)
+                )
+              ]
+              
             )
           ],
         ),

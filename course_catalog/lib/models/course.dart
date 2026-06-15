@@ -1,14 +1,18 @@
+import 'course_level.dart';
+
 class Course{
   final String title;
-  final String level;
+  final CourseLevel level;
   final String duration;
   final int numberOfLessons;
-  final String description;
+  final String shortDescription;
+  final String fullDescription;
   const Course({
     required this.title, 
     required this.level, 
     required this.duration, 
     required this.numberOfLessons, 
-    required this.description
+    required this.shortDescription,
+    required this.fullDescription
     });
 }

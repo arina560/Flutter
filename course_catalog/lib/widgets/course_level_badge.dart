@@ -1,21 +1,9 @@
 import 'package:flutter/material.dart';
+import '../models/course_level.dart';
 
 class CourseLevelBadge extends StatelessWidget{
-  final String level;
+  final CourseLevel level;
   const CourseLevelBadge({super.key, required this.level});
-
-  Color _getColor() {
-    switch (level) {
-      case "Начинающий": 
-        return Colors.green;
-      case "Средний":
-        return Colors.orange;
-      case "Продвинутый":
-      return Colors.red;
-      default: 
-      return Colors.grey;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +11,10 @@ class CourseLevelBadge extends StatelessWidget{
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: _getColor(), width: 2),
+        border: Border.all(color: level.color, width: 2),
       ),
       child: Text(
-        level,
+        level.courseLevelName,
         style: TextStyle(
           color: Colors.black,
           fontSize: 12,
