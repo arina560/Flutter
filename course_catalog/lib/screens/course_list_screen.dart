@@ -4,9 +4,9 @@ import '../models/course.dart';
 import '../widgets/course_card.dart';
 
 class CourseListScreen extends StatelessWidget{
-  const CourseListScreen({super.key});
+  CourseListScreen({super.key});
   
-  final List<Course> courses = const[
+  final List<Course> courses = [
     Course(
       title: "Программирование на Python с Нуля + Работа с SQL", 
       level: CourseLevel.beginner, 

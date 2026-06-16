@@ -7,12 +7,14 @@ class Course{
   final int numberOfLessons;
   final String shortDescription;
   final String fullDescription;
-  const Course({
+  bool isFavorite;
+  Course({
     required this.title, 
     required this.level, 
     required this.duration, 
     required this.numberOfLessons, 
     required this.shortDescription,
-    required this.fullDescription
+    required this.fullDescription,
+    this.isFavorite = false,
     });
 }
