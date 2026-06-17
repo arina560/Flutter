@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 
 class CourseCard extends StatefulWidget {
   final Course course;
-  const CourseCard({super.key, required this.course});
+  final VoidCallback onFavoriteToggle;
+  const CourseCard({super.key, required this.course, required this.onFavoriteToggle});
 
   @override
   State<CourseCard> createState() => _CourseCardState();
@@ -26,48 +27,57 @@ class _CourseCardState extends State<CourseCard>{
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.all(8),
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              widget.course.title,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 3),
-            CourseLevelBadge(level: widget.course.level),
-            if (_isHidden) ...[
+      child: InkWell(
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => CourseDetailScreen(courseId: widget.course.id)));
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Text(
+                      widget.course.title,
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: widget.onFavoriteToggle,
+                    icon: Icon(
+                      widget.course.isFavorite ? Icons.favorite : Icons.favorite_border,
+                      color: widget.course.isFavorite ? Colors.red : Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+              Text(
+                widget.course.title,
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 3),
-              CourseMetaRow(duration: widget.course.duration, numberOfLessons: widget.course.numberOfLessons),
-              const SizedBox(height: 8),
-              Text(widget.course.shortDescription),
-            ],
-            const SizedBox(height: 3),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                GestureDetector(
-                  onTap: _toggleHidden,
-                  child: Icon(
-                    _isHidden ? Icons.remove : Icons.add,
-                  ),
+              CourseLevelBadge(level: widget.course.level),
+              if (_isHidden) ...[
+                const SizedBox(height: 3),
+                CourseMetaRow(duration: widget.course.duration, numberOfLessons: widget.course.numberOfLessons),
+                const SizedBox(height: 8),
+                Text(widget.course.shortDescription),
+              ],
+              const SizedBox(height: 3),
+              GestureDetector(
+                onTap: _toggleHidden,
+                child: Icon(
+                  _isHidden ? Icons.remove : Icons.add,
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => CourseDetailScreen(course: widget.course)));
-                  },
-                  style: ElevatedButton.styleFrom(
-                    shadowColor: Colors.deepPurple
-                  ),
-                  child: const Text("Перейти на курс", style: TextStyle(color: Colors.black),)
-                )
-              ]
-              
-            )
-          ],
+              ),
+            ],
+          ),
         ),
-      ),
+      )
     );
   }
 }

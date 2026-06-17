@@ -1,6 +1,7 @@
 import 'course_level.dart';
 
 class Course{
+  final int id;
   final String title;
   final CourseLevel level;
   final String duration;
@@ -9,6 +10,7 @@ class Course{
   final String fullDescription;
   bool isFavorite;
   Course({
+    required this.id,
     required this.title, 
     required this.level, 
     required this.duration, 
