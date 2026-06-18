@@ -120,8 +120,9 @@ class CourseScopeProviderState extends State<CourseScopeProvider>{
     setState(() {
       final index = _courses.indexWhere((c) => c.id == id);
       if (index != -1) {
-        _courses[index].isFavorite = !_courses[index].isFavorite;
-        _courses = List.from(_courses);
+        final course = _courses[index];
+        _courses = List.of(_courses);
+        _courses[index] = course.copyWith(isFavorite: !course.isFavorite);
       }
     });
   }
