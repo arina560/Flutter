@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return CourseScope(
+    return CourseScopeProvider(
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(

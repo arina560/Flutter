@@ -16,7 +16,7 @@ class _CourseListScreen extends State<CourseListScreen>{
   bool _onlyFavorites = false;
 
   List<Course> get _filteredCourses {
-    final allcourses = CourseScope.of(context).courses;
+    final allcourses = CourseScopeProvider.of(context).courses;
     return allcourses.where((course) {
       if (_selectedLevel != null && _selectedLevel != course.level){
         return false;
@@ -41,9 +41,7 @@ class _CourseListScreen extends State<CourseListScreen>{
   }
 
   void _toggleIsFavorite(Course course){
-    setState(() {
-      course.isFavorite = !course.isFavorite;
-    });
+    CourseScopeProvider.of(context).toggleFavorite(course.id);
   }
 
   @override
@@ -80,7 +78,9 @@ class _CourseListScreen extends State<CourseListScreen>{
           )
         ],
       ),
-      body: ListView.builder(
+      body: _filteredCourses.isEmpty 
+      ? Center(child: Text("Нет курсов, соответствующих фильтру"))
+      : ListView.builder(
         itemCount: _filteredCourses.length,
         itemBuilder: (context, index){
           final course = _filteredCourses[index];

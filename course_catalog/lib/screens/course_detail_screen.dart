@@ -14,7 +14,7 @@ class CourseDetailScreen extends StatefulWidget {
 }
 
 class _CourseDetailScreen extends State<CourseDetailScreen>{
-  Course get _course => CourseScope.of(context).getCourseById(widget.courseId)!;
+  Course get _course => CourseScopeProvider.of(context).getCourseById(widget.courseId)!;
 
   @override
   Widget build(BuildContext context){
@@ -23,9 +23,7 @@ class _CourseDetailScreen extends State<CourseDetailScreen>{
         title: Text("Course details", style: TextStyle(fontWeight: FontWeight.bold)),
         actions: [
           IconButton(onPressed: (){
-            setState(() {
-              _course.isFavorite = !_course.isFavorite;
-            });
+            CourseScopeProvider.of(context).toggleFavorite(widget.courseId);
           }, icon: Icon(
             _course.isFavorite ? Icons.favorite : Icons.favorite_border,
             color: _course.isFavorite ? Colors.red : Colors.grey,
