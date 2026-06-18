@@ -42,6 +42,18 @@ class _CourseListScreen extends State<CourseListScreen>{
 
   void _toggleIsFavorite(Course course){
     CourseScopeProvider.of(context).toggleFavorite(course.id);
+
+    ScaffoldMessenger.of(context).clearSnackBars();
+    final snackBar = SnackBar(
+      content: Text(course.isFavorite ? "Добавлен в избранные" : "Удален из избранных"),
+      duration: const Duration(seconds: 2),
+      persist: false,
+      action: SnackBarAction(
+        label: "Отмена", 
+        onPressed: () { CourseScopeProvider.of(context).toggleFavorite(course.id); }
+        )
+      );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override

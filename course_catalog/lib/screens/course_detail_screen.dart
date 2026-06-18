@@ -24,6 +24,15 @@ class _CourseDetailScreen extends State<CourseDetailScreen>{
         actions: [
           IconButton(onPressed: (){
             CourseScopeProvider.of(context).toggleFavorite(widget.courseId);
+
+            ScaffoldMessenger.of(context).clearSnackBars();
+            final snackBar = SnackBar(
+              content: Text(_course.isFavorite ? "Добавлен в избранные" : "Удален из избранных"),
+              duration: const Duration(seconds: 2),
+              persist: false,
+              action: SnackBarAction(label: "Отмена", onPressed: () { CourseScopeProvider.of(context).toggleFavorite(widget.courseId); }),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
           }, icon: Icon(
             _course.isFavorite ? Icons.favorite : Icons.favorite_border,
             color: _course.isFavorite ? Colors.red : Colors.grey,
