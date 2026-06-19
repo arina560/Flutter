@@ -109,22 +109,41 @@ class CourseScopeProviderState extends State<CourseScopeProvider>{
   List<Course> get courses => _courses;
 
   Course? getCourseById(int id){
-    try{
-      return _courses.firstWhere((course) => course.id == id);
-    }catch(e){
-      return null;
+    return _courses.where((course) => course.id == id).firstOrNull;
+  }
+
+  List<Course> filterCourses({CourseLevel? level, bool onlyFavorites = false}) {
+    return _courses.where((course) {
+      if (level != null && level != course.level) {
+        return false;
+      }
+      if (onlyFavorites && !course.isFavorite) {
+        return false;
+      }
+      return true;
+    }).toList();
+  }
+
+  void addToFavorites(int id) {
+    final course = _courses.where((c) => c.id == id).firstOrNull;
+    if (course != null && !course.isFavorite) {
+      final index = _courses.indexOf(course);
+      setState(() {
+        _courses = List.of(_courses);
+        _courses[index] = course.copyWith(isFavorite: true);
+      });
     }
   }
 
-  void toggleFavorite(int id) {
-    setState(() {
-      final index = _courses.indexWhere((c) => c.id == id);
-      if (index != -1) {
-        final course = _courses[index];
+  void removeFromFavorites(int id) {
+    final course = _courses.where((c) => c.id == id).firstOrNull;
+    if (course != null && course.isFavorite) {
+      final index = _courses.indexOf(course);
+      setState(() {
         _courses = List.of(_courses);
-        _courses[index] = course.copyWith(isFavorite: !course.isFavorite);
-      }
-    });
+        _courses[index] = course.copyWith(isFavorite: false);
+      });
+    }
   }
   
   @override

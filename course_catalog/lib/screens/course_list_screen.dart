@@ -1,5 +1,5 @@
 import 'package:course_catalog/models/course_level.dart';
-import 'package:course_catalog/widgets/course_scope.dart';
+import 'package:course_catalog/providers/course_scope.dart';
 import 'package:flutter/material.dart';
 import '../models/course.dart';
 import '../widgets/course_card.dart';
@@ -16,16 +16,10 @@ class _CourseListScreen extends State<CourseListScreen>{
   bool _onlyFavorites = false;
 
   List<Course> get _filteredCourses {
-    final allcourses = CourseScopeProvider.of(context).courses;
-    return allcourses.where((course) {
-      if (_selectedLevel != null && _selectedLevel != course.level){
-        return false;
-      }
-      if (_onlyFavorites && !course.isFavorite){
-        return false;
-      }
-      return true;
-    }).toList();
+    return CourseScopeProvider.of(context).filterCourses(
+      level: _selectedLevel,
+      onlyFavorites: _onlyFavorites,
+    );
   }
 
   void _toggleFavoritesFilter(){
@@ -41,18 +35,29 @@ class _CourseListScreen extends State<CourseListScreen>{
   }
 
   void _toggleIsFavorite(Course course){
-    CourseScopeProvider.of(context).toggleFavorite(course.id);
+    final provider = CourseScopeProvider.of(context);
+    if (course.isFavorite) {
+      provider.removeFromFavorites(course.id);
+    } else {
+      provider.addToFavorites(course.id);
+    }
 
     ScaffoldMessenger.of(context).clearSnackBars();
     final snackBar = SnackBar(
-      content: Text(course.isFavorite ? "Добавлен в избранные" : "Удален из избранных"),
+      content: Text(course.isFavorite ? "Удален из избранных" : "Добавлен в избранные"),
       duration: const Duration(seconds: 2),
       persist: false,
       action: SnackBarAction(
-        label: "Отмена", 
-        onPressed: () { CourseScopeProvider.of(context).toggleFavorite(course.id); }
-        )
-      );
+        label: "Отмена",
+        onPressed: () {
+          if (course.isFavorite) {
+            provider.addToFavorites(course.id);
+          } else {
+            provider.removeFromFavorites(course.id);
+          }
+        },
+      ),
+    );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 

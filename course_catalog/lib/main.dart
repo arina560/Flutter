@@ -1,4 +1,4 @@
-import 'package:course_catalog/widgets/course_scope.dart';
+import 'package:course_catalog/providers/course_scope.dart';
 
 import 'screens/course_list_screen.dart';
 import 'package:flutter/material.dart';
