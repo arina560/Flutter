@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/course_level.dart';
+import '../../domain/entities/course_level.dart';
+import '../../domain/entities/course_level_extension.dart';
 
 class CourseLevelBadge extends StatelessWidget{
   final CourseLevel level;

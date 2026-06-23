@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../models/course.dart';
-import '../models/course_level.dart';
+import '../domain/entities/course.dart';
+import '../domain/entities/course_level.dart';
+
 
 class _CourseScope extends InheritedWidget{
   final List<Course> courses;

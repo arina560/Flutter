@@ -1,8 +1,8 @@
-import 'package:course_catalog/screens/course_detail_screen.dart';
+import 'package:course_catalog/presentation/screens/course_detail_screen.dart';
 
-import '../models/course.dart';
-import '../widgets/course_level_badge.dart';
-import '../widgets/course_meta_row.dart';
+import '../../domain/entities/course.dart';
+import 'course_level_badge.dart';
+import 'course_meta_row.dart';
 import 'package:flutter/material.dart';
 
 class CourseCard extends StatefulWidget {

@@ -1,6 +1,6 @@
 import 'package:course_catalog/providers/course_scope.dart';
 
-import 'screens/course_list_screen.dart';
+import 'presentation/screens/course_list_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
