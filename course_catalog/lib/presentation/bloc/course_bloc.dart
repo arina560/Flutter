@@ -33,7 +33,18 @@ class CourseBloc extends Bloc<CourseEvent, CourseState> {
   }
 
   Future<void> _onRefreshRequested(CourseRefreshRequested event, Emitter<CourseState> emit) async{
-    
+    final current = state;
+    if (current is! CourseLoaded) {
+      add(const CourseLoadRequested());
+      return;
+    }
+    emit(CourseRefreshing(courses: current.courses, selectedLevel: current.selectedLevel, onlyFavorites: current.onlyFavorites));
+    try{
+      final courses = await _filterCourses(FilterCoursesParams(level: current.selectedLevel, onlyFavorites: current.onlyFavorites));
+      emit(current.copyWith(courses: courses));
+    } catch (e){
+      emit(current);
+    }
   }
 
   Future<void> _onFilterChange(CourseFilterChange event, Emitter<CourseState> emit) async {
@@ -63,9 +74,16 @@ class CourseBloc extends Bloc<CourseEvent, CourseState> {
   Future<void> _onCourseFavoriteToggled(CourseFavoriteToggled event, Emitter<CourseState> emit) async {
     final current = state;
     if (current is! CourseLoaded) return;
+    final course = current.courses.where((c) => c.id == event.courseId).firstOrNull;
+    if (course == null) return;
     try {
       await _toggleFavorite(event.courseId);
       final courses = await _filterCourses(FilterCoursesParams( level: current.selectedLevel, onlyFavorites: current.onlyFavorites));
+      if (course.isFavorite){
+        emit(CourseRemoveFromFavorites(course.id));
+      } else {
+        emit(CourseAddedToFavorites(course.id));
+      }
       emit(current.copyWith(courses: courses));
     } catch (e){
       emit(CourseError(_formatError(e)));

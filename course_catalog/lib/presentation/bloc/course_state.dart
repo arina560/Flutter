@@ -44,3 +44,13 @@ final class CourseError extends CourseState {
   final String message;
   const CourseError(this.message);
 }
+
+final class CourseAddedToFavorites extends CourseState{
+  final int courseId;
+  const CourseAddedToFavorites(this.courseId);
+}
+
+final class CourseRemoveFromFavorites extends CourseState{
+  final int courseId;
+  const CourseRemoveFromFavorites(this.courseId);
+}
