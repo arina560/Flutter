@@ -55,17 +55,12 @@ class _CourseCardState extends State<CourseCard>{
                   ),
                 ],
               ),
-              Text(
-                widget.course.title,
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 3),
-              CourseLevelBadge(level: widget.course.level),
+              CourseLevelBadge(isBeginner: widget.course.isBeginner),
               if (_isHidden) ...[
                 const SizedBox(height: 3),
-                CourseMetaRow(duration: widget.course.duration, numberOfLessons: widget.course.numberOfLessons),
+                CourseMetaRow(imageUrl: widget.course.imageUrl),
                 const SizedBox(height: 8),
-                Text(widget.course.shortDescription),
+                Text(widget.course.description),
               ],
               const SizedBox(height: 3),
               GestureDetector(

@@ -1,6 +1,3 @@
-
-import '../../domain/entities/course_level.dart';
-
 sealed class CourseEvent {
   const CourseEvent();
 }
@@ -14,8 +11,8 @@ final class CourseRefreshRequested extends CourseEvent{
 }
 
 final class CourseFilterChange extends CourseEvent{
-  final CourseLevel? level;
-  const CourseFilterChange(this.level);
+  final bool? onlyBeginners;
+  const CourseFilterChange(this.onlyBeginners);
 }
 
 final class CourseFavoritesFilter extends CourseEvent{
@@ -23,6 +20,6 @@ final class CourseFavoritesFilter extends CourseEvent{
 }
 
 final class CourseFavoriteToggled extends CourseEvent{
-  final int courseId;
+  final String courseId;
   const CourseFavoriteToggled(this.courseId);
 }

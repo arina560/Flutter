@@ -2,13 +2,12 @@ import 'package:course_catalog/presentation/bloc/course_bloc.dart';
 import 'package:course_catalog/presentation/bloc/course_event.dart';
 import 'package:course_catalog/presentation/bloc/course_state.dart';
 import 'package:course_catalog/presentation/widgets/course_level_badge.dart';
-import 'package:course_catalog/presentation/widgets/course_meta_row.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/course.dart';
 
 class CourseDetailScreen extends StatelessWidget {
-  final int courseId;
+  final String courseId;
   const CourseDetailScreen({super.key,required this.courseId});
 
   Course? _findCourse(CourseState state){
@@ -36,22 +35,6 @@ class CourseDetailScreen extends StatelessWidget {
             actions: [
               IconButton(onPressed: (){
                 context.read<CourseBloc>().add(CourseFavoriteToggled(courseId));
-                // ScaffoldMessenger.of(context).clearSnackBars();
-                // final snackBar = SnackBar(
-                //   content: Text(course.isFavorite ? "Удален из избранных" : "Добавлен в избранные"),
-                //   duration: const Duration(seconds: 2),
-                //   persist: false,
-                //   action: SnackBarAction(
-                //     label: "Отмена",
-                //     onPressed: () {
-                //       if (course.isFavorite) {
-                //         provider.addToFavorites(widget.courseId);
-                //       } else {
-                //         provider.removeFromFavorites(widget.courseId);
-                //       }
-                //     },
-                //   ),
-                //ScaffoldMessenger.of(context).showSnackBar(snackBar);
               }, icon: Icon(
                 course.isFavorite ? Icons.favorite : Icons.favorite_border,
                 color: course.isFavorite ? Colors.red : Colors.grey,
@@ -66,11 +49,11 @@ class CourseDetailScreen extends StatelessWidget {
               spacing: 12,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Image.network(course.imageUrl, height: 300, width: double.infinity, fit: BoxFit.cover),
                 Text(course.title, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                CourseLevelBadge(level: course.level),
-                CourseMetaRow(duration: course.duration, numberOfLessons: course.numberOfLessons),
+                CourseLevelBadge(isBeginner: course.isBeginner),
                 Text('Описание курса', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                Text(course.fullDescription, style: TextStyle(fontSize: 16))
+                Text(course.description, style: TextStyle(fontSize: 16))
               ],
             ),
           ),

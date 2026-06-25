@@ -1,23 +1,17 @@
-import 'course_level.dart';
-
 class Course{
-  final int id;
+  final String id;
   final String title;
-  final CourseLevel level;
-  final String duration;
-  final int numberOfLessons;
-  final String shortDescription;
-  final String fullDescription;
+  final String description;
+  final String imageUrl;
+  final bool isBeginner;
   final bool isFavorite;
 
   const Course({
     required this.id,
     required this.title,
-    required this.level,
-    required this.duration,
-    required this.numberOfLessons,
-    required this.shortDescription,
-    required this.fullDescription,
+    required this.description,
+    required this.imageUrl,
+    required this.isBeginner,
     this.isFavorite = false,
   });
 
@@ -25,11 +19,9 @@ class Course{
     return Course(
       id: id,
       title: title,
-      level: level,
-      duration: duration,
-      numberOfLessons: numberOfLessons,
-      shortDescription: shortDescription,
-      fullDescription: fullDescription,
+      description: description,
+      imageUrl: imageUrl,
+      isBeginner: isBeginner,
       isFavorite: isFavorite ?? this.isFavorite,
     );
   }

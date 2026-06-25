@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
 
 class CourseMetaRow extends StatelessWidget{
-  final String duration;
-  final int numberOfLessons;
-  const CourseMetaRow({super.key, required this.duration, required this.numberOfLessons});
+  final String imageUrl;
+  const CourseMetaRow({super.key, required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       spacing: 16,
       children: [
-        Text(duration, style: TextStyle(fontSize: 13),),
-        Text("$numberOfLessons уроков", style: TextStyle(fontSize: 13)),
+        ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  imageUrl,
+                  width: 80,
+                  height: 80,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, _, _) => const Icon(Icons.image, size: 80),
+                ),
+              ),
       ],
     );
   }

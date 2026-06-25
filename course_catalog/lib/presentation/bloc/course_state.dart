@@ -1,5 +1,4 @@
 import '../../domain/entities/course.dart';
-import '../../domain/entities/course_level.dart';
 
 sealed class CourseState {
   const CourseState();
@@ -15,26 +14,26 @@ final class CourseLoading extends CourseState{
 
 final class CourseRefreshing extends CourseState{
   final List<Course> courses;
-  final CourseLevel? selectedLevel;
+  final bool? onlyBeginners;
   final bool onlyFavorites;
-  const CourseRefreshing({required this.courses, this.selectedLevel, this.onlyFavorites = false});
+  const CourseRefreshing({required this.courses, this.onlyBeginners, this.onlyFavorites = false});
 }
 
 final class CourseLoaded extends CourseState{
   final List<Course> courses;
-  final CourseLevel? selectedLevel;
+  final bool? onlyBeginners;
   final bool onlyFavorites;
-  CourseLoaded({required this.courses, this.selectedLevel, this.onlyFavorites = false});
+  CourseLoaded({required this.courses, this.onlyBeginners, this.onlyFavorites = false});
   
   CourseLoaded copyWith({
     List<Course>? courses,
-    CourseLevel? selectedLevel,
+    bool? onlyBeginners,
     bool clearLevel = false,
     bool? onlyFavorites,
   }) {
     return CourseLoaded(
       courses: courses ?? this.courses,
-      selectedLevel: clearLevel ? null : selectedLevel ?? this.selectedLevel,
+      onlyBeginners: clearLevel ? null : onlyBeginners ?? this.onlyBeginners,
       onlyFavorites: onlyFavorites ?? this.onlyFavorites,
     );
   }
@@ -46,11 +45,11 @@ final class CourseError extends CourseState {
 }
 
 final class CourseAddedToFavorites extends CourseState{
-  final int courseId;
+  final String courseId;
   const CourseAddedToFavorites(this.courseId);
 }
 
 final class CourseRemoveFromFavorites extends CourseState{
-  final int courseId;
+  final String courseId;
   const CourseRemoveFromFavorites(this.courseId);
 }

@@ -10,67 +10,61 @@ import '../widgets/course_card.dart';
 class CourseListScreen extends StatelessWidget{
   const CourseListScreen({super.key});
 
-    // ScaffoldMessenger.of(context).clearSnackBars();
-    // final snackBar = SnackBar(
-    //   content: Text(course.isFavorite ? "Удален из избранных" : "Добавлен в избранные"),
-    //   duration: const Duration(seconds: 2),
-    //   persist: false,
-    //   action: SnackBarAction(
-    //     label: "Отмена",
-    //     onPressed: () {
-    //       if (course.isFavorite) {
-    //         provider.addToFavorites(course.id);
-    //       } else {
-    //         provider.removeFromFavorites(course.id);
-    //       }
-    //     },
-    //   ),
-    // );
-    // ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Programming courses", style: TextStyle(fontWeight: FontWeight.bold),),
-        backgroundColor: Colors.greenAccent,
-        foregroundColor: Colors.deepPurple,
-        bottom: const PreferredSize(preferredSize: Size.fromHeight(35), child: CourseFilterBar()),
-      ),
-      body: BlocConsumer<CourseBloc,CourseState>(
-        listenWhen: (previous, current) => current is CourseAddedToFavorites || current is CourseRemoveFromFavorites || current is CourseError,
-        listener: (context, state) {
-          switch (state){
-            case CourseAddedToFavorites():
-            _showSnackBar(context, message: "Добавлен в изранные", onUndo: () => context.read<CourseBloc>().add(CourseFavoriteToggled(state.courseId)));
-            case CourseRemoveFromFavorites(): 
-            _showSnackBar(context, message: "Удален из избранных", onUndo: () => context.read<CourseBloc>().add(CourseFavoriteToggled(state.courseId)));
-            case CourseError():
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Expanded(child: Text(state.message))));
-            default: break;
-          }
-        },
-        buildWhen: (_, current) =>
-          current is CourseInitial ||
-          current is CourseLoading ||
-          current is CourseLoaded ||
-          current is CourseRefreshing,
-        builder: (context, state) {
-          return switch (state) {
-            CourseInitial() => const SizedBox.shrink(),
-            CourseLoading() => const Center(child: CircularProgressIndicator()),
-            CourseError(:final message) => _buildErrorView(context, message),
-            CourseRefreshing(:final courses) => _buildCourseList(context, courses),
-            CourseLoaded(:final courses) => _buildCourseList(context, courses),
-            _ => const SizedBox.shrink()
-          };
-        },
-      )
+    return BlocConsumer<CourseBloc, CourseState>(
+      listenWhen: (_, current) =>
+          current is CourseAddedToFavorites ||
+          current is CourseRemoveFromFavorites ||
+          current is CourseError,
+      listener: (context, state) {
+        switch (state) {
+          case CourseAddedToFavorites():
+          _showSnackBar(context, message: "Добавлен в изранные", onUndo: () => context.read<CourseBloc>().add(CourseFavoriteToggled(state.courseId)));
+          case CourseRemoveFromFavorites(): 
+          _showSnackBar(context, message: "Удален из избранных", onUndo: () => context.read<CourseBloc>().add(CourseFavoriteToggled(state.courseId)));
+          case CourseError():
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Expanded(child: Text(state.message))));
+          default: break;
+        }
+      },
+      builder: (context, state) {
+        final (onlyBeginners, onlyFavorites) = switch (state) {
+          CourseLoaded(:final onlyBeginners, :final onlyFavorites) =>
+            (onlyBeginners, onlyFavorites),
+          CourseRefreshing(:final onlyBeginners, :final onlyFavorites) =>
+            (onlyBeginners, onlyFavorites),
+          _ => (null, false),
+        };
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("Courses", style: TextStyle(fontWeight: FontWeight.bold),),
+            backgroundColor: Colors.greenAccent,
+            foregroundColor: Colors.deepPurple,
+            bottom: PreferredSize(preferredSize: Size.fromHeight(35), 
+              child: CourseFilterBar(
+                onlyBeginners: onlyBeginners,
+                onlyFavorites: onlyFavorites,
+                onLevelFilterChange: (c) => context.read<CourseBloc>().add(CourseFilterChange(c)),
+                onFavoritesFilterToggle: () => context.read<CourseBloc>().add(const CourseFavoritesFilter()),
+              )),
+          ),
+          body: switch (state) {
+            CourseInitial() || CourseLoading() =>
+              const Center(child: CircularProgressIndicator()),
+            CourseError(:final message) =>
+              _buildError(context, message),
+            CourseLoaded(:final courses) ||
+            CourseRefreshing(:final courses) =>
+              _buildCourseList(context, courses),
+            _ => const SizedBox.shrink(),
+          },
+        );
+      }
     );
   }
 
-  Widget _buildErrorView(BuildContext context, String message){
+  Widget _buildError(BuildContext context, String message){
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -89,28 +83,29 @@ class CourseListScreen extends StatelessWidget{
   }
 
   Widget _buildCourseList(BuildContext context, List<Course> courses){
-    return Column(
-      children: [
-        if (courses.isEmpty)
-          const Expanded(
-            child: Center(child: Text('Нет курсов, соответствующих фильтру')),
-          )
-        else 
-          Expanded(
-            child: ListView.builder(
-              itemCount: courses.length,
-              itemBuilder: (context, index) {
-                final course = courses[index];
-                return CourseCard(
-                  course: course,
-                  onFavoriteToggle: () => context
-                      .read<CourseBloc>()
-                      .add(CourseFavoriteToggled(course.id)),
-                );
-              },
-            ),
-          ),
-      ],
+    if (courses.isEmpty) {
+      return RefreshIndicator(
+        onRefresh: () async { context.read<CourseBloc>().add(const CourseRefreshRequested());},
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: const [
+            SizedBox(height: 300, child: Center(child: Text('Нет курсов'))),
+          ],
+        ),
+      );
+    }
+    return RefreshIndicator(
+      onRefresh: () async { context.read<CourseBloc>().add(const CourseRefreshRequested()); },
+      child: ListView.builder(
+        itemCount: courses.length,
+        itemBuilder: (context, index) {
+          final course = courses[index];
+          return CourseCard(
+            course: course,
+            onFavoriteToggle: () => context.read<CourseBloc>().add(CourseFavoriteToggled(course.id)),
+          );
+        },
+      ),
     );
   }
 
@@ -120,6 +115,7 @@ class CourseListScreen extends StatelessWidget{
     ..showSnackBar(SnackBar(
       content: Text(message), 
       duration: const Duration(seconds: 2),
+      persist: false,
       action: SnackBarAction(label: "Отмена", onPressed: onUndo),
      ));
   }

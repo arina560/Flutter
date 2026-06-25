@@ -3,27 +3,38 @@ import 'package:course_catalog/data/datasources/course_data_source.dart';
 import '../models/course_dto.dart';
 
 class MockCourseDataSource implements CourseDataSourse {
-  static const _mockData = [
+  static const _mockData = <Map<String, dynamic>>[
     {
-      'id': 1,
-      'title': 'Программирование на Python с Нуля + Работа с SQL',
-      'level': 'beginner',
-      'duration': '8 недель',
-      'numberOfLessons': 48,
-      'shortDescription': '...',
-      'fullDescription': '...',
+      'id': '1',
+      'title': 'Программирование на Python с Нуля',
+      'description': 'Изучите Python с нуля, освоите работу с базами данных SQL.',
+      'imageUrl': '',
+      'isBeginner': true,
+    },
+    {
+      'id': '2',
+      'title': 'PRO C#. Backend разработчик',
+      'description': 'Глубокое погружение в C#, ASP.NET Core, микросервисы.',
+      'imageUrl': '',
+      'isBeginner': false,
+    },
+    {
+      'id': '3',
+      'title': 'Java-разработчик',
+      'description': 'Java Core, OOP, многопоточность, коллекции.',
+      'imageUrl': '',
+      'isBeginner': false,
     },
   ];
-  
+ 
   @override
   Future<List<CourseDto>> getCourses() async {
-    // Имитируем задержку сети
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 400));
     return _mockData.map(CourseDto.fromJson).toList();
   }
-
+ 
   @override
-  Future<CourseDto?> getCourseById(int id) async {
+  Future<CourseDto?> getCourseById(String id) async {
     await Future.delayed(const Duration(milliseconds: 200));
     final json = _mockData.where((m) => m['id'] == id).firstOrNull;
     return json != null ? CourseDto.fromJson(json) : null;

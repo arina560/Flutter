@@ -1,7 +1,8 @@
+import 'package:course_catalog/data/datasources/api_course_data_course.dart';
 import 'package:course_catalog/domain/usecases/get_courses.dart';
 import 'package:course_catalog/presentation/bloc/course_bloc.dart';
+import 'package:course_catalog/presentation/bloc/course_event.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'data/datasources/mock_course_data_source.dart';
 import 'data/repositories/course_repository_impl.dart';
 import 'domain/usecases/filter_courses.dart';
 import 'domain/usecases/toggle_favorite.dart';
@@ -12,7 +13,7 @@ void main() {
   runApp(const MyApp());
 }
 
-final dataSource = MockCourseDataSource();
+final dataSource = ApiCourseDataCourse();
 final repository = CourseRepositoryImpl(dataSource);
 final getCourses = GetCoursesUseCase(repository);
 final filterCourses = FilterCourses(repository);
@@ -23,13 +24,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => CourseBloc(getCourses: getCourses, filterCourses: filterCourses, toggleFavorite: toggleFavorite),
+      create: (context) => CourseBloc(
+        getCourses: getCourses,
+        filterCourses: filterCourses,
+        toggleFavorite: toggleFavorite,
+      )..add(const CourseLoadRequested()),
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
-          colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         ),
-        home: CourseListScreen(),
+        home: const CourseListScreen(),
       ),
     );
   }
