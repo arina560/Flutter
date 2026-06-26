@@ -8,35 +8,36 @@ final class CourseInitial extends CourseState{
   const CourseInitial();
 }
 
-final class CourseLoading extends CourseState{
-  const CourseLoading();
-}
-
-final class CourseRefreshing extends CourseState{
+class CourseLoaded extends CourseState{
   final List<Course> courses;
   final bool? onlyBeginners;
   final bool onlyFavorites;
-  const CourseRefreshing({required this.courses, this.onlyBeginners, this.onlyFavorites = false});
-}
-
-final class CourseLoaded extends CourseState{
-  final List<Course> courses;
-  final bool? onlyBeginners;
-  final bool onlyFavorites;
-  CourseLoaded({required this.courses, this.onlyBeginners, this.onlyFavorites = false});
+  final String? snackbarMessage;
+  final String? toggledCourseId;
+  CourseLoaded({required this.courses, this.onlyBeginners, this.onlyFavorites = false, this.snackbarMessage, this.toggledCourseId});
   
   CourseLoaded copyWith({
     List<Course>? courses,
     bool? onlyBeginners,
     bool clearLevel = false,
+    String? snackbarMessage,
     bool? onlyFavorites,
+    bool clearSnackbar = false,
+    String? toggledCourseId,
+    bool clearToggled = false,
   }) {
     return CourseLoaded(
       courses: courses ?? this.courses,
       onlyBeginners: clearLevel ? null : onlyBeginners ?? this.onlyBeginners,
       onlyFavorites: onlyFavorites ?? this.onlyFavorites,
+      snackbarMessage: clearSnackbar ? null : snackbarMessage ?? this.snackbarMessage, 
+      toggledCourseId: clearToggled ? null : toggledCourseId ?? this.toggledCourseId,
     );
   }
+}
+
+final class CourseRefreshing extends CourseLoaded{
+  CourseRefreshing({required super.courses, super.onlyBeginners, super.onlyFavorites = false});
 }
 
 final class CourseError extends CourseState {
@@ -44,12 +45,12 @@ final class CourseError extends CourseState {
   const CourseError(this.message);
 }
 
-final class CourseAddedToFavorites extends CourseState{
-  final String courseId;
-  const CourseAddedToFavorites(this.courseId);
-}
+// final class CourseAddedToFavorites extends CourseState{
+//   final String courseId;
+//   const CourseAddedToFavorites(this.courseId);
+// }
 
-final class CourseRemoveFromFavorites extends CourseState{
-  final String courseId;
-  const CourseRemoveFromFavorites(this.courseId);
-}
+// final class CourseRemoveFromFavorites extends CourseState{
+//   final String courseId;
+//   const CourseRemoveFromFavorites(this.courseId);
+// }

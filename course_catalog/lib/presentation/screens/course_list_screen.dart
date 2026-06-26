@@ -13,26 +13,30 @@ class CourseListScreen extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<CourseBloc, CourseState>(
-      listenWhen: (_, current) =>
-          current is CourseAddedToFavorites ||
-          current is CourseRemoveFromFavorites ||
-          current is CourseError,
+       listenWhen: (previos, current) {
+        if (current is CourseLoaded && current.snackbarMessage != null) return true;
+        if (current is CourseError) return true;
+        return false;
+      },
       listener: (context, state) {
-        switch (state) {
-          case CourseAddedToFavorites():
-          _showSnackBar(context, message: "Добавлен в изранные", onUndo: () => context.read<CourseBloc>().add(CourseFavoriteToggled(state.courseId)));
-          case CourseRemoveFromFavorites(): 
-          _showSnackBar(context, message: "Удален из избранных", onUndo: () => context.read<CourseBloc>().add(CourseFavoriteToggled(state.courseId)));
-          case CourseError():
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Expanded(child: Text(state.message))));
-          default: break;
+       if (state is CourseLoaded && state.snackbarMessage != null) {
+          // Показываем снекбар с сообщением и возможностью отмены
+          _showSnackBar(
+            context,
+            message: state.snackbarMessage!,
+            onUndo: state.toggledCourseId != null ? () => context.read<CourseBloc>().add(CourseFavoriteToggled(state.toggledCourseId!)) : null,
+          );
+          // Очищаем сообщение, чтобы не показывать повторно
+          context.read<CourseBloc>().add(ClearSnackbar());
+        } else if (state is CourseError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message),  duration: const Duration(seconds: 3), persist: false,),
+          );
         }
       },
       builder: (context, state) {
         final (onlyBeginners, onlyFavorites) = switch (state) {
           CourseLoaded(:final onlyBeginners, :final onlyFavorites) =>
-            (onlyBeginners, onlyFavorites),
-          CourseRefreshing(:final onlyBeginners, :final onlyFavorites) =>
             (onlyBeginners, onlyFavorites),
           _ => (null, false),
         };
@@ -50,13 +54,20 @@ class CourseListScreen extends StatelessWidget{
               )),
           ),
           body: switch (state) {
-            CourseInitial() || CourseLoading() =>
+            CourseInitial() =>
               const Center(child: CircularProgressIndicator()),
-            CourseError(:final message) =>
-              _buildError(context, message),
-            CourseLoaded(:final courses) ||
-            CourseRefreshing(:final courses) =>
-              _buildCourseList(context, courses),
+            CourseError(:final message) => _CourseErrorView(
+              message: message,
+              onRetry: () =>
+                  context.read<CourseBloc>().add(const CourseLoadRequested()),
+            ),
+            CourseLoaded(:final courses) => _CourseListView(
+              courses: courses,
+              onRefresh: () async =>
+                  context.read<CourseBloc>().add(const CourseRefreshRequested()),
+              onFavoriteToggle: (id) =>
+                  context.read<CourseBloc>().add(CourseFavoriteToggled(id)),
+            ),
             _ => const SizedBox.shrink(),
           },
         );
@@ -64,7 +75,29 @@ class CourseListScreen extends StatelessWidget{
     );
   }
 
-  Widget _buildError(BuildContext context, String message){
+  void _showSnackBar(BuildContext context,{required String message, required VoidCallback? onUndo}){
+    ScaffoldMessenger.of(context)
+    ..clearSnackBars()
+    ..showSnackBar(SnackBar(
+      content: Text(message), 
+      duration: const Duration(seconds: 2),
+      persist: false,
+      action: onUndo != null ? SnackBarAction(label: "Отмена", onPressed: onUndo) : null,
+     ));
+  }
+}
+
+class _CourseErrorView extends StatelessWidget {
+  final String message;
+  final VoidCallback onRetry;
+
+  const _CourseErrorView({
+    required this.message,
+    required this.onRetry,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -74,18 +107,31 @@ class CourseListScreen extends StatelessWidget{
           Text(message, textAlign: TextAlign.center),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: () => context.read<CourseBloc>().add(const CourseLoadRequested()),
+            onPressed: onRetry,
             child: const Text('Попробовать снова'),
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildCourseList(BuildContext context, List<Course> courses){
+class _CourseListView extends StatelessWidget {
+  final List<Course> courses;
+  final Future<void> Function() onRefresh;
+  final void Function(String courseId) onFavoriteToggle;
+
+  const _CourseListView({
+    required this.courses,
+    required this.onRefresh,
+    required this.onFavoriteToggle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     if (courses.isEmpty) {
       return RefreshIndicator(
-        onRefresh: () async { context.read<CourseBloc>().add(const CourseRefreshRequested());},
+        onRefresh: onRefresh,
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
           children: const [
@@ -95,28 +141,17 @@ class CourseListScreen extends StatelessWidget{
       );
     }
     return RefreshIndicator(
-      onRefresh: () async { context.read<CourseBloc>().add(const CourseRefreshRequested()); },
+      onRefresh: onRefresh,
       child: ListView.builder(
         itemCount: courses.length,
         itemBuilder: (context, index) {
           final course = courses[index];
           return CourseCard(
             course: course,
-            onFavoriteToggle: () => context.read<CourseBloc>().add(CourseFavoriteToggled(course.id)),
+            onFavoriteToggle: () => onFavoriteToggle(course.id),
           );
         },
       ),
     );
-  }
-
-  void _showSnackBar(BuildContext context,{required String message, required VoidCallback onUndo}){
-    ScaffoldMessenger.of(context)
-    ..clearSnackBars()
-    ..showSnackBar(SnackBar(
-      content: Text(message), 
-      duration: const Duration(seconds: 2),
-      persist: false,
-      action: SnackBarAction(label: "Отмена", onPressed: onUndo),
-     ));
   }
 }

@@ -23,3 +23,7 @@ final class CourseFavoriteToggled extends CourseEvent{
   final String courseId;
   const CourseFavoriteToggled(this.courseId);
 }
+
+class ClearSnackbar extends CourseEvent {
+  const ClearSnackbar();
+}

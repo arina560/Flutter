@@ -22,11 +22,12 @@ class CourseBloc extends Bloc<CourseEvent, CourseState> {
         on<CourseFilterChange>(_onFilterChange);
         on<CourseFavoritesFilter>(_onFavoritesFilter);
         on<CourseFavoriteToggled>(_onCourseFavoriteToggled);
+        on<ClearSnackbar>(_onClearSnackBar);
       
   }
 
   Future<void> _onLoadRequeted(CourseLoadRequested event, Emitter<CourseState> emit) async{
-    emit(const CourseLoading());
+    emit(const CourseInitial());
     try {
       final courses = await _getCourses();
       emit(CourseLoaded(courses: courses));
@@ -53,7 +54,7 @@ class CourseBloc extends Bloc<CourseEvent, CourseState> {
   Future<void> _onFilterChange(CourseFilterChange event, Emitter<CourseState> emit) async {
     final current = state;
     if (current is! CourseLoaded) return;
-    if (current.onlyFavorites == event.onlyBeginners) return;
+    if (current.onlyBeginners == event.onlyBeginners) return;
     try {
       final courses = await _filterCourses(FilterCoursesParams(onlyBeginners: event.onlyBeginners, onlyFavorites: current.onlyFavorites));
       emit(current.copyWith(courses: courses, onlyBeginners: event.onlyBeginners, clearLevel: event.onlyBeginners == null));
@@ -82,14 +83,24 @@ class CourseBloc extends Bloc<CourseEvent, CourseState> {
     try {
       await _toggleFavorite(event.courseId);
       final courses = await _filterCourses(FilterCoursesParams( onlyBeginners: current.onlyBeginners, onlyFavorites: current.onlyFavorites));
-      if (course.isFavorite){
-        emit(CourseRemoveFromFavorites(course.id));
-      } else {
-        emit(CourseAddedToFavorites(course.id));
-      }
-      emit(current.copyWith(courses: courses));
+      final message = course.isFavorite ? 'Удален из избранных' : 'Добавлен в избранные';
+      emit(current.copyWith(
+      courses: courses,
+      snackbarMessage: message,
+      toggledCourseId: event.courseId,
+    ));
     } catch (e){
       emit(CourseError(_formatError(e)));
+    }
+  }
+
+  Future<void> _onClearSnackBar(ClearSnackbar event, Emitter<CourseState> emit) async {
+    if (state is CourseLoaded) {
+      final loadedState = state as CourseLoaded;
+      emit(loadedState.copyWith(
+        clearSnackbar: true,
+        clearToggled: true,
+      ));
     }
   }
 

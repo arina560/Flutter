@@ -13,7 +13,6 @@ class CourseDetailScreen extends StatelessWidget {
   Course? _findCourse(CourseState state){
     return switch (state) {
       CourseLoaded() => state.courses.where((c) => c.id == courseId).firstOrNull,
-      CourseRefreshing() => state.courses.where((c) => c.id == courseId).firstOrNull,
       _ => null,
     };
   }
