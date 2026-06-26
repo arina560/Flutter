@@ -68,7 +68,6 @@ class CourseListScreen extends StatelessWidget{
               onFavoriteToggle: (id) =>
                   context.read<CourseBloc>().add(CourseFavoriteToggled(id)),
             ),
-            _ => const SizedBox.shrink(),
           },
         );
       }
