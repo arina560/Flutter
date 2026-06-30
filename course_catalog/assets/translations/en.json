@@ -1,0 +1,19 @@
+{
+    "appTitle": "Course Catalog",
+    "courseDetails": "Course Details",
+    "filterAll": "All",
+    "filterBeginner": "Beginner",
+    "filterAdvanced": "Advanced",
+    "filterFavorites": "Favorites",
+    "descriptionLabel": "Course description",
+    "levelBeginner": "Beginner",
+    "levelAdvanced": "Advanced",
+    "addedToFavorites": "Added to favorites",
+    "removedFromFavorites": "Removed from favorites",
+    "undoAction": "Undo",
+    "noCourses": "No courses",
+    "courseNotFound": "Course not found",
+    "retryButton": "Try again",
+    "networkError": "Network error: {detail}",
+    "loadCoursesError": "Failed to load courses: {code}"
+  }

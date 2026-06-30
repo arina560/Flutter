@@ -1,13 +1,23 @@
+import 'package:course_catalog/app/app_constants.dart';
 import 'package:course_catalog/di/injection.dart';
 import 'package:course_catalog/presentation/bloc/course_bloc.dart';
-import 'package:course_catalog/presentation/bloc/course_event.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'presentation/screens/course_list_screen.dart';
 import 'package:flutter/material.dart';
 
-void main() {
-  setupDependencies();
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+  await setupDependencies();
+
+  runApp(EasyLocalization(
+      supportedLocales: [Locale('en'), Locale('ru')],
+      path: 'assets/translations',
+      fallbackLocale: Locale('en'),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -15,12 +25,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => getit<CourseBloc>()..add(const CourseLoadRequested()),
+      create: (context) => getit<CourseBloc>(),
       child: MaterialApp(
         title: 'Flutter Demo',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        ),
+        theme: AppTheme.lightTheme,
+        localizationsDelegates: context.localizationDelegates,
+        supportedLocales: context.supportedLocales,
         home: const CourseListScreen(),
       ),
     );

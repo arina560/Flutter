@@ -23,6 +23,7 @@ class CourseBloc extends Bloc<CourseEvent, CourseState> {
         on<CourseFavoritesFilter>(_onFavoritesFilter);
         on<CourseFavoriteToggled>(_onCourseFavoriteToggled);
         on<ClearSnackbar>(_onClearSnackBar);
+        add(CourseLoadRequested());
       
   }
 
@@ -83,7 +84,7 @@ class CourseBloc extends Bloc<CourseEvent, CourseState> {
     try {
       await _toggleFavorite(event.courseId);
       final courses = await _filterCourses(FilterCoursesParams( onlyBeginners: current.onlyBeginners, onlyFavorites: current.onlyFavorites));
-      final message = course.isFavorite ? 'Удален из избранных' : 'Добавлен в избранные';
+      final message = course.isFavorite ? 'removedFromFavorites' : 'addedToFavorites';
       emit(current.copyWith(
       courses: courses,
       snackbarMessage: message,

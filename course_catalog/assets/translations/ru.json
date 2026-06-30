@@ -1,0 +1,19 @@
+{
+    "appTitle": "Каталог курсов",
+    "courseDetails": "Детали курса",
+    "filterAll": "Все",
+    "filterBeginner": "Начинающий",
+    "filterAdvanced": "Продвинутый",
+    "filterFavorites": "Избранное",
+    "descriptionLabel": "Описание курса",
+    "levelBeginner": "Начинающий",
+    "levelAdvanced": "Продвинутый",
+    "addedToFavorites": "Добавлен в избранные",
+    "removedFromFavorites": "Удален из избранных",
+    "undoAction": "Отмена",
+    "noCourses": "Нет курсов",
+    "courseNotFound": "Курс не найден",
+    "retryButton": "Попробовать снова",
+    "networkError": "Ошибка сети: {detail}",
+    "loadCoursesError": "Не удалось загрузить курсы: {code}"
+  }

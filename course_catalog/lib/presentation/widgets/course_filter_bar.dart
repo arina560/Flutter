@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../app/app_localizations.dart';
+
 class CourseFilterBar extends StatelessWidget{
   final bool? onlyBeginners;
   final bool onlyFavorites;
@@ -13,11 +15,11 @@ class CourseFilterBar extends StatelessWidget{
       children: [
         DropdownButton<bool?>(
           value: onlyBeginners,
-          hint: const Text("Все уровни"),
+          hint: Text(context.filterAll),
           items: [
-            DropdownMenuItem(value: null, child: Text("Все уровни")),
-            DropdownMenuItem(value: true, child: Text("Начинающий")),
-            DropdownMenuItem(value: false, child: Text("Продвинутый"))
+            DropdownMenuItem(value: null, child: Text(context.filterAll)),
+            DropdownMenuItem(value: true, child: Text(context.filterBeginner)),
+            DropdownMenuItem(value: false, child: Text(context.filterAdvanced))
           ],
           onChanged: onLevelFilterChange,
         ),
@@ -27,7 +29,7 @@ class CourseFilterBar extends StatelessWidget{
             onlyFavorites ? Icons.favorite : Icons.favorite_border,
             color: onlyFavorites ? Colors.red : Colors.grey,
           ),
-          tooltip: "Только избранные",
+          tooltip: context.filterFavorites,
         )
       ],
     );

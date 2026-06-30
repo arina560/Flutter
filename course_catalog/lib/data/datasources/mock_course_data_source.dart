@@ -1,3 +1,4 @@
+import 'package:course_catalog/app/app_constants.dart';
 import 'package:course_catalog/data/datasources/course_data_source.dart';
 
 import '../models/course_dto.dart';
@@ -29,13 +30,13 @@ class MockCourseDataSource implements CourseDataSourse {
  
   @override
   Future<List<CourseDto>> getCourses() async {
-    await Future.delayed(const Duration(milliseconds: 400));
+    await Future.delayed(AppConstants.mockDelay);
     return _mockData.map(CourseDto.fromJson).toList();
   }
  
   @override
   Future<CourseDto?> getCourseById(String id) async {
-    await Future.delayed(const Duration(milliseconds: 200));
+    await Future.delayed(AppConstants.mockDetailDelay);
     final json = _mockData.where((m) => m['id'] == id).firstOrNull;
     return json != null ? CourseDto.fromJson(json) : null;
   }

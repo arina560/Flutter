@@ -15,10 +15,10 @@ class ApiCourseDataCourse implements CourseDataSourse{
         final List<dynamic> jsonList = response.data; 
         return jsonList.cast<Map<String, dynamic>>().map(CourseDto.fromJson).toList();
       } else {
-        throw Exception('Не удалось загрузить курсы: ${response.statusCode}');
+        throw Exception('load_error: ${response.statusCode}');
       }
     } on DioException catch (e) {
-      throw Exception('Ошибка сети: ${e.message}');
+      throw Exception('network_error: ${e.message}');
     }
   }
   @override
@@ -30,13 +30,13 @@ class ApiCourseDataCourse implements CourseDataSourse{
       } else if (response.statusCode == 404) {
         return null;
       } else {
-        throw Exception('Не удалось загрузить курсы: ${response.statusCode}');
+        throw Exception('load_error: ${response.statusCode}');
       }
     } on DioException catch (e) {
       if (e.response?.statusCode == 404) {
         return null;
       }
-      throw Exception('Ошибка сети: ${e.message}');
+      throw Exception('network_error: ${e.message}');
     }
   }
 }

@@ -1,5 +1,5 @@
 import 'package:course_catalog/presentation/screens/course_detail_screen.dart';
-
+import '../../app/app_constants.dart';
 import '../../domain/entities/course.dart';
 import 'course_level_badge.dart';
 import 'course_meta_row.dart';
@@ -26,14 +26,14 @@ class _CourseCardState extends State<CourseCard>{
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.all(8),
+      margin: const EdgeInsets.all(AppConstants.paddingMedium),
       child: InkWell(
         onTap: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) => CourseDetailScreen(courseId: widget.course.id)));
         },
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppConstants.radius),
         child: Padding(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(AppConstants.paddingMedium),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -43,7 +43,7 @@ class _CourseCardState extends State<CourseCard>{
                   Expanded(
                     child: Text(
                       widget.course.title,
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: AppTextStyles.headline1,
                     ),
                   ),
                   IconButton(
@@ -57,12 +57,12 @@ class _CourseCardState extends State<CourseCard>{
               ),
               CourseLevelBadge(isBeginner: widget.course.isBeginner),
               if (_isHidden) ...[
-                const SizedBox(height: 3),
+                const SizedBox(height: AppConstants.paddingMedium),
                 CourseMetaRow(imageUrl: widget.course.imageUrl),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppConstants.paddingMedium),
                 Text(widget.course.description),
               ],
-              const SizedBox(height: 3),
+              const SizedBox(height: AppConstants.paddingMedium),
               GestureDetector(
                 onTap: _toggleHidden,
                 child: Icon(

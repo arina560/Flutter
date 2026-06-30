@@ -4,6 +4,8 @@ import 'package:course_catalog/presentation/bloc/course_state.dart';
 import 'package:course_catalog/presentation/widgets/course_level_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../app/app_constants.dart';
+import '../../app/app_localizations.dart';
 import '../../domain/entities/course.dart';
 
 class CourseDetailScreen extends StatelessWidget {
@@ -24,13 +26,13 @@ class CourseDetailScreen extends StatelessWidget {
         final course = _findCourse(state);
 
         if (course == null){
-          return const Scaffold(
-            body: Center(child: Text('Курс не найден')),
+          return Scaffold(
+            body: Center(child: Text(context.courseNotFound)),
           );
         }
         return Scaffold(
           appBar: AppBar(
-            title: Text("Course details", style: TextStyle(fontWeight: FontWeight.bold)),
+            title: Text(context.courseDetails),
             actions: [
               IconButton(onPressed: (){
                 context.read<CourseBloc>().add(CourseFavoriteToggled(courseId));
@@ -39,20 +41,18 @@ class CourseDetailScreen extends StatelessWidget {
                 color: course.isFavorite ? Colors.red : Colors.grey,
               ))
             ],
-            backgroundColor: Colors.deepPurple,
-            foregroundColor: Colors.greenAccent,
           ),
           body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AppConstants.paddingMedium),
             child: Column(
-              spacing: 12,
+              spacing: AppConstants.paddingMedium,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Image.network(course.imageUrl, height: 300, width: double.infinity, fit: BoxFit.cover),
-                Text(course.title, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Image.network(course.imageUrl, height: AppConstants.detailImageHeight, width: double.infinity, fit: BoxFit.cover),
+                Text(course.title, style: AppTextStyles.headline1,),
                 CourseLevelBadge(isBeginner: course.isBeginner),
-                Text('Описание курса', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                Text(course.description, style: TextStyle(fontSize: 16))
+                Text(context.descriptionLabel, style: AppTextStyles.headline2),
+                Text(course.description, style: AppTextStyles.body)
               ],
             ),
           ),
