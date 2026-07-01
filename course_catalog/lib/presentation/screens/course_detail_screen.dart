@@ -48,7 +48,13 @@ class CourseDetailScreen extends StatelessWidget {
               spacing: AppConstants.paddingMedium,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Image.network(course.imageUrl, height: AppConstants.detailImageHeight, width: double.infinity, fit: BoxFit.cover),
+                Image.network(
+                  course.imageUrl,
+                  height: AppConstants.detailImageHeight,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => const Icon(Icons.error, size: 50),
+                ),
                 Text(course.title, style: AppTextStyles.headline1,),
                 CourseLevelBadge(isBeginner: course.isBeginner),
                 Text(context.descriptionLabel, style: AppTextStyles.headline2),
@@ -59,7 +65,5 @@ class CourseDetailScreen extends StatelessWidget {
         );
       }
     );
-
-    
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../app/app_localizations.dart';
 
 class CourseFilterBar extends StatelessWidget{
@@ -13,18 +12,20 @@ class CourseFilterBar extends StatelessWidget{
   Widget build(BuildContext context) {
     return Row(
       children: [
-        DropdownButton<bool?>(
-          value: onlyBeginners,
-          hint: Text(context.filterAll),
-          items: [
-            DropdownMenuItem(value: null, child: Text(context.filterAll)),
-            DropdownMenuItem(value: true, child: Text(context.filterBeginner)),
-            DropdownMenuItem(value: false, child: Text(context.filterAdvanced))
-          ],
-          onChanged: onLevelFilterChange,
+        Material(
+          child: DropdownButton<bool?>(
+            value: onlyBeginners,
+            hint: Text(context.filterAll),
+            items: [
+              DropdownMenuItem(value: null, child: Text(context.filterAll)),
+              DropdownMenuItem(value: true, child: Text(context.filterBeginner)),
+              DropdownMenuItem(value: false, child: Text(context.filterAdvanced))
+            ],
+            onChanged: onLevelFilterChange,
+          ),
         ),
         IconButton(
-          onPressed:onFavoritesFilterToggle, 
+          onPressed:onFavoritesFilterToggle,
           icon: Icon(
             onlyFavorites ? Icons.favorite : Icons.favorite_border,
             color: onlyFavorites ? Colors.red : Colors.grey,
